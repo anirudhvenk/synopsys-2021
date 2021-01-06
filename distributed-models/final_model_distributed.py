@@ -1,5 +1,6 @@
 from keras.objectives import categorical_crossentropy
 from tensorflow.keras.activations import softmax
+from tensorflow.keras.activations import relu
 import sys
 import pickle
 import numpy as np
@@ -11,6 +12,10 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Reshape
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import LSTM
+from tensorflow.keras.layers import PReLU
+from tensorflow.keras.layers import Embedding
+from tensorflow.keras.layers import Input
+from tensorflow.keras.layers import Flatten
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.utils import to_categorical
 import pandas
@@ -27,7 +32,7 @@ def split_input_target(chunk):
 
 
 def preprocess_data():
-    path_to_file = "./100k_SMILES.txt"
+    path_to_file = "../data/100k_SMILES.txt"
     text = open(path_to_file).read()
 
     vocab = sorted(set(text))
@@ -66,16 +71,26 @@ def preprocess_data():
 def get_compiled_model():
     model = Sequential(
         [
-            LSTM(128, input_shape=(137, 1), return_sequences=True),
-            Dropout(0.3),
+            Input(shape=(137,), dtype='int32', name="smiles_input"),
+            Embedding(output_dim=64, input_dim=34, input_length=137),
+            LSTM(128, return_sequences=True),
+            PReLU(),
+            Dropout(0.1),
             LSTM(256, return_sequences=True),
-            Dropout(0.3),
+            PReLU(),
+            Dropout(0.1),
             LSTM(512, return_sequences=True),
-            Dropout(0.3),
+            PReLU(),
+            Dropout(0.1),
             LSTM(256, return_sequences=True),
-            Dropout(0.3),
-            LSTM(128),
-            Dropout(0.3),
+            PReLU(),
+            Dropout(0.1),
+            LSTM(128, return_sequences=True),
+            PReLU(),
+            Flatten(),
+            Dense(256, activation="relu"),
+            Dropout(0.1),
+            Dense(128, activation="relu"),
             Dense(34, activation="softmax")
         ]
     )
@@ -85,21 +100,23 @@ def get_compiled_model():
     return(model)
 
 
-filepath = "./weights_2a/weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
-checkpoint = ModelCheckpoint(
-    filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
-callbacks_list = [checkpoint]
-
-strategy = tf.distribute.MirroredStrategy()
-print("Number of devices: {}".format(strategy.num_replicas_in_sync))
-
-# Open a strategy scope.
-with strategy.scope():
-    # Everything that creates variables should be under the strategy scope.
-    # In general this is only model construction & `compile()`.
-    model = get_compiled_model()
-
-
-# Train the model on all available devices.
+model = get_compiled_model()
 train_dataset = preprocess_data()
 history = model.fit(train_dataset, epochs=10)
+
+# filepath = "./weights_2a/weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
+# checkpoint = ModelCheckpoint(
+#     filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
+# callbacks_list = [checkpoint]
+
+# strategy = tf.distribute.MirroredStrategy()
+# print("Number of devices: {}".format(strategy.num_replicas_in_sync))
+
+# # Open a strategy scope.
+# with strategy.scope():
+#     # Everything that creates variables should be under the strategy scope.
+#     # In general this is only model construction & `compile()`.
+#     model = get_compiled_model()
+
+
+# # Train the model on all available devices.
