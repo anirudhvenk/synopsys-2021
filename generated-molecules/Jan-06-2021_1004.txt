@@ -1,0 +1,4 @@
+
+CCNc1ccc(C(=O)NCC(=O)Nc2ccc(C)c(C)c2)cc1
+CC(C)[C@H](C)NC(=O)C1CC[NH2+][C@@H]1CCC[NH+]1CCCC[C@@H]1CO
+CCCCC(=O)N1CCC[C@@H](C(=O)N2CCC[C@@H

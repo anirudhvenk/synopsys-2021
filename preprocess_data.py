@@ -36,7 +36,7 @@ def preprocess_data():
     text_as_int = np.array([[char2idx[c]] for c in text])
 
     # The maximum length sentence you want for a single input in characters
-    seq_length = 100
+    seq_length = 137
     examples_per_epoch = len(text)//(seq_length+1)
 
     # Create training examples / targets
@@ -62,5 +62,6 @@ def preprocess_data():
 
 
 dataset = preprocess_data()
-print(type(dataset))
-# np.save("./saved-variables/network_input.npy", dataset)
+network_input = np.stack(list(dataset))
+
+print(type(network_input))
