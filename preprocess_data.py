@@ -62,6 +62,5 @@ def preprocess_data():
 
 
 dataset = preprocess_data()
-network_input = np.stack(list(dataset))
-
-print(type(network_input))
+network_input = np.array(list(dataset.as_numpy_iterator()))
+print(network_input)

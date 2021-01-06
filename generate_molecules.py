@@ -25,20 +25,20 @@ char_map = pickle.load(open("./saved-variables/reverse_map.pkl", mode="rb"))
 model = Sequential(
     [
         LSTM(128, input_shape=(137, 1), return_sequences=True),
-        Dropout(0.3),
+        Dropout(0.1),
         LSTM(256, return_sequences=True),
-        Dropout(0.3),
+        Dropout(0.1),
         LSTM(512, return_sequences=True),
-        Dropout(0.3),
+        Dropout(0.1),
         LSTM(256, return_sequences=True),
-        Dropout(0.3),
+        Dropout(0.1),
         LSTM(128),
-        Dropout(0.3),
+        Dropout(0.1),
         Dense(34, activation="softmax")
     ]
 )
 
-model.load_weights("weights/weights-improvement-73-0.6129.hdf5")
+model.load_weights("weights/weights-improvement-164-0.1369.hdf5")
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 
@@ -47,10 +47,9 @@ timestamp = time.strftime('%b-%d-%Y_%H%M', t)
 file = open("./generated-molecules/" + timestamp + ".txt", "a")
 
 
-seed = "CC[C@H](C)N1C(=O)[C@@H]2[C@H](CC(N)=O)[NH2+][C@@]3(C(=O)Nc4ccccc43)[C@@H]2C1=O\nCCC(CC)(C[NH3+])N1CCOCC1"
+seed = "ClC[C@H]1CCCO[C@H]1c1ccc(Cl)s1\nCOC(=O)C1=C(CCl)NC(=O)N[C@@H]1c1cccc(Cl)c1\nC[C@H]1[C@H](C(=O)[O-])CCN1C(=O)c1ccc2ncsc2c1\nO=C(NC12CC3CC(CC("
 pattern1d = [reverse_map[c] for c in seed]
 pattern = [[i] for i in pattern1d]
-print(pattern)
 print("Seed:")
 print("\"", ''.join([char_map[value[0]] for value in pattern]), "\"")
 
