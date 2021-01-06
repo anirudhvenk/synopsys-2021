@@ -14,8 +14,8 @@ from tensorflow.keras.layers import LSTM
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.utils import to_categorical
 import pandas
-
-tf.compat.v1.enable_eager_execution()
+import os
+import time
 
 
 def split_input_target(chunk):
@@ -67,15 +67,15 @@ def get_compiled_model():
     model = Sequential(
         [
             LSTM(128, input_shape=(137, 1), return_sequences=True),
-            Dropout(0.3),
+            Dropout(0.1),
             LSTM(256, return_sequences=True),
-            Dropout(0.3),
+            Dropout(0.1),
             LSTM(512, return_sequences=True),
-            Dropout(0.3),
+            Dropout(0.1),
             LSTM(256, return_sequences=True),
-            Dropout(0.3),
+            Dropout(0.1),
             LSTM(128),
-            Dropout(0.3),
+            Dropout(0.1),
             Dense(34, activation="softmax")
         ]
     )
@@ -83,6 +83,11 @@ def get_compiled_model():
     model.compile(loss="categorical_crossentropy",
                   optimizer="adam", metrics=["accuracy"])
     return(model)
+
+
+t = time.localtime()
+timestamp = time.strftime('%b-%d-%Y_%H%M', t)
+os.mkdir("./weights-"+timestamp)
 
 
 filepath = "./weights_2a/weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
