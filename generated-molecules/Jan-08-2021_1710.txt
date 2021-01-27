@@ -1,0 +1,3 @@
+(C)n(C(=O)NCC(=O)N(CC(=O)NC)cc3)CC2)cc1
+Cc1nccc1NC(=O)Cn1c(=O)n(CCc2ccccc3Cl)c2oc2c1
+CCOc1ccc(/n2nc(CN(CC(C)C)cc(C(=O)N3CCCC3)n2)c1-c1ccc

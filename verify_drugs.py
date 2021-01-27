@@ -1,6 +1,11 @@
+import matplotlib as plt
+from pandas.core.common import flatten
+import numpy as np
+import time
 from rdkit import Chem, DataStructs
 from rdkit.Chem import AllChem, Draw, Descriptors, rdMolDescriptors
 from rdkit.Chem.Draw import SimilarityMaps
+from rdkit.Chem import Draw
 
 
 def isValid(mol):
@@ -45,6 +50,28 @@ def isDrugLike(mol):
         return False
 
 
-mol = "CCCCn1cc(C(=O)NCC[C@H](c2ccccc2)c2nc3ccccc3c2=O)c1"
-print(isValid(mol))
-print(isDrugLike(mol))
+# filter garbage molecules
+data = open("generated-molecules/Jan-08-2021_2144.txt", "r").read()
+data = [data[y - 138:y] for y in range(138, len(data) + 138, 138)]
+mol = [seq.split("\n") for seq in data]
+mol = [list(filter(None, arr)) for arr in mol]
+mol = [i[1:-1] for i in mol]
+mol = list(flatten(mol))
+
+
+t = time.localtime()
+timestamp = time.strftime('%b-%d-%Y_%H%M', t)
+file = open("./valid-molecules/" + timestamp + ".txt", "a")
+validMol = 0
+invalidMol = 0
+for m in mol:
+    if (isValid(m)):
+        validMol += 1
+        file.write(m + "\n")
+    else:
+        invalidMol += 1
+
+
+print("{0:.0%}".format(validMol / len(mol)))
+print(validMol)
+print(invalidMol)
