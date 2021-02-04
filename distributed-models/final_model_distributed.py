@@ -89,7 +89,8 @@ def get_compiled_model():
 t = time.localtime()
 timestamp = time.strftime('%b-%d-%Y_%H%M', t)
 os.mkdir("./weights-"+timestamp)
-filepath = "./weights-"+timestamp+"/weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
+filepath = "./weights-"+timestamp + \
+    "/weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
 
 checkpoint = ModelCheckpoint(
     filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
