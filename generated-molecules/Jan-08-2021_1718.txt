@@ -1,4 +1,0 @@
-n(CC(=O)NCc2ccc(Cl)cc2)c1OC
-N)c1
-C[NH2+]C[C@H](c1ccccc1)c1ccccc1
-CCn1nn(C)c(C(=O)NCCCN2C(=O)NC(=O)NC(=O)CC(=O)NC(=O)CC(=O)NC(=O)CC(=O)NC(

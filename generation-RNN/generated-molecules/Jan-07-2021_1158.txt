@@ -1,0 +1,4 @@
+
+COc1cc(NC(=O)N2CC[C@@H](N[C@@H](C)C3)cc1Bl)cc1
+CC(C)CCN(C(=O)CCn1cc(C)nc1N1CCCCC1
+C[C@H](CC(=O)NCC1CC[NH+](Cc2ccccc35)N[C@H]3CCCC[C@@H]2
