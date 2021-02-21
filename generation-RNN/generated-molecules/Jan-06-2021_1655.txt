@@ -1,5 +1,0 @@
-
-COc1cc(/c2ccccc2SCC(F)(F)F)cc1
-N#CCN1CCN(c2ccc(C(=O)NCC(C)C)cc2)CC1
-CCN(CC)C(=O)N[C@H](C)c1ccc(F)c(F)c1F
-CCc1noc(C)c1C(=O)NCCC1(CC1)OCCC

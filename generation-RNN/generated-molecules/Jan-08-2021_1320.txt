@@ -1,6 +1,0 @@
-
-CC(C)CC1
-CCOc1nc(C)c(NC(=O)c3cc(C)c(C)n2)cc1
-CCOC(=O)[C@H]1CCCN(c2nc(-c3ccccc3)c3C)nc1
-COc1cc(NC(=O)N2CC[C@@H](C(=O)NCC3CCCC3)C2)CC1
-CCC

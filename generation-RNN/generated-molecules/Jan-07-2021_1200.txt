@@ -1,3 +1,0 @@
-
-COc1cc([C@H](C)[NH+](C)C2CCCCCC2)c1C(=O)N[C@H](C)c1ccc(-c2ncnn2)cc1
-Cc1cc(C)n(C(=O)NCC(=O)NC(=O)NC(=O)NC(=O)NC(=O)CC(c3ccccc2)C(F)(C)C)c

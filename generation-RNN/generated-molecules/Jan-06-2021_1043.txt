@@ -1,4 +1,0 @@
-C)(C)C3)C2)C2
-CCCCn1cc(C(=O)NCC[C@H](c2ccccc2)c2nc3ccccc3c2=O)c1
-CC(C)[C@@H](CC(=O)N[C@H]1CCCC[C@@H]1O)c1
-CCCn1cc(C[NH+]2CCCCC2)nc2c(C)c(
