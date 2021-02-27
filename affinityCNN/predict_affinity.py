@@ -1,3 +1,17 @@
+'''
+
+Title: Affinity Predictor
+Author: Anirudh Venkatraman
+Availibility: https://github.com/anirudhvenkatraman/synopsys-2021
+
+Class to predict IC-50 score by loading the weights of the CNN and running model.predict() on a
+given molecule and a FASTA sequence.
+
+To train the model, run affinity_CNN_train in a jupyter notebook.
+
+'''
+
+
 import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
@@ -29,6 +43,7 @@ class AffinityPrediction:
             zip(amino_acids, range(1, len(amino_acids)+1)))
         # added one for empty characters filled in with 0's
         self.aminos = len(amino_acids) + 1
+        self.model = self.build_and_compile_model()
 
     def build_and_compile_model(self):
         # 1D CNN model
@@ -106,11 +121,10 @@ class AffinityPrediction:
                       loss={'output': 'mae'},
                       metrics={'output': r2_score})
 
-        model.load_weights("affinity-CNN/weights/affinity-best (2).hdf5")
+        model.load_weights("affinityCNN/weights/affinity-best (5).hdf5")
         return(model)
 
     def predict_affinity(self, smiles, fasta):
-        model = self.build_and_compile_model()
 
         smiles_in = []
         for element in smiles:
@@ -124,12 +138,5 @@ class AffinityPrediction:
         while(len(fasta_in) != self.max_fasta):
             fasta_in.append(0)
 
-        return model.predict({'smiles_input': np.array(smiles_in).reshape(1, self.max_smiles,),
-                              'fasta_input': np.array(fasta_in).reshape(1, self.max_fasta,)})[0][0]
-
-
-predictor = AffinityPrediction()
-
-affinity = predictor.predict_affinity('C(c1ccc(C#N)c(-c2ccccc2C)c1)c1cncn1C',
-                                      'MGDRGSSRRRRTGSRPSSHGGGGPAAAEEEVRDAAAGPDVGAAGDAPAPAPNKDGDAGVGSGHWELRCHRLQDSLFSSDSGFSNYRGILNWCVVMLILSNARLFLENLIKYGILVDPIQVVSLFLKDPYSWPAPCLVIAANVFAVAAFQVEKRLAVGALTEQAGLLLHVANLATILCFPAAVVLLVESITPVGSLLALMAHTILFLKLFSYRDVNSWCRRARAKAASAGKKASSAAAPHTVSYPDNLTYRDLYYFLFAPTLCYELNFPRSPRIRKRFLLRRILEMLFFTQLQVGLIQQWMVPTIQNSMKPFKDMDYSRIIERLLKLAVPNHLIWLIFFYWLFHSCLNAVAELMQFGDREFYRDWWNSESVTYFWQNWNIPVHKWCIRHFYKPMLRRGSSKWMARTGVFLASAFFHEYLVSVPLRMFRLWAFTGMMAQIPLAWFVGRFFQGNYGNAAVWLSLIIGQPIAVLMYVHDYYVLNYEAPAAEA')
-print(affinity)
+        return self.model({'smiles_input': np.array(smiles_in).reshape(1, self.max_smiles,),
+                           'fasta_input': np.array(fasta_in).reshape(1, self.max_fasta,)}, training=False)[0][0]

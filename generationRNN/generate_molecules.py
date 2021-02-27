@@ -1,3 +1,17 @@
+'''
+
+Title: Molecule Generator
+Author: Anirudh Venkatraman
+Availibility: https://github.com/anirudhvenkatraman/synopsys-2021
+
+Class to generate SMILES sequence by loading weeights of the RNN and running model.predict() to
+predict the next most likely character to appear in a SMILES sequence. It then determines the validity 
+of the molecule using the rdkit library.
+
+To train the model, run generation_RNN_train in a jupyter notebook.
+
+'''
+
 from keras.objectives import categorical_crossentropy
 from tensorflow.keras.activations import softmax
 import tensorflow_datasets as tfds
@@ -27,9 +41,14 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import AllChem, Draw, Descriptors, rdMolDescriptors
 from rdkit.Chem.Draw import SimilarityMaps
 from rdkit.Chem import Draw
+from rdkit import RDLogger
+RDLogger.DisableLog('rdApp.info')
 
 
 class GenerateMolecules:
+
+    def __init__(self):
+        self.model, self.char_map, self.reverse_map = self.build_and_compile_model()
 
     def split_input_target(self, chunk):
         input_text = chunk[:-1]
@@ -39,7 +58,7 @@ class GenerateMolecules:
         return input_text, target
 
     def preprocess_data(self):
-        path_to_file = "generation-RNN/data/100k_SMILES.txt"
+        path_to_file = "generationRNN/data/100k_SMILES.txt"
         text = open(path_to_file).read()
 
         vocab = sorted(set(text))
@@ -76,9 +95,9 @@ class GenerateMolecules:
 
     def build_and_compile_model(self):
         reverse_map = pickle.load(
-            open("generation-RNN/saved-variables/char_map.pkl", mode="rb"))
+            open("generationRNN/saved-variables/char_map.pkl", mode="rb"))
         char_map = pickle.load(
-            open("generation-RNN/saved-variables/reverse_map.pkl", mode="rb"))
+            open("generationRNN/saved-variables/reverse_map.pkl", mode="rb"))
 
         model = Sequential(
             [
@@ -97,7 +116,7 @@ class GenerateMolecules:
         )
 
         model.load_weights(
-            "generation-RNN/weights/generation_RNN_weights.hdf5")
+            "generationRNN/weights/generation_RNN_weights.hdf5")
         model.compile(loss='categorical_crossentropy', optimizer='adam')
 
         return(model, char_map, reverse_map)
@@ -105,7 +124,7 @@ class GenerateMolecules:
     def generate(self, iterations):
         t = time.localtime()
         # file = open("generation-RNN/generated-molecules/" +timestamp + ".txt", "a")
-        model, char_map, reverse_map = self.build_and_compile_model()
+        # model, char_map, reverse_map = self.build_and_compile_model()
         generated_mols = ''
 
         for i in range(iterations):
@@ -118,14 +137,14 @@ class GenerateMolecules:
 
             pattern = x[0][np.random.randint(0, 127)]
             print("Seed:")
-            print("\"", ''.join([char_map[value[0]]
+            print("\"", ''.join([self.char_map[value[0]]
                                  for value in pattern]), "\"")
 
             for i in range(137):
                 x = np.reshape(pattern, (1, len(pattern), 1))
-                prediction = model.predict(x, verbose=0)
+                prediction = self.model.predict(x, verbose=0)
                 index = np.argmax(prediction)
-                result = char_map[index]
+                result = self.char_map[index]
                 cur_mol += result
                 pattern = np.append(pattern, np.array([[index]]), axis=0)
                 pattern = pattern[1:len(pattern)]
@@ -175,7 +194,6 @@ class GenerateMolecules:
         mol = list(flatten(mol))
 
         mol_list = []
-
         validMol = 0
         invalidMol = 0
         for m in mol:

@@ -43,13 +43,13 @@ class MolCombHelper:
         freqs = sorted([(y, x) for x, y in cntr.items()], reverse=True)
 
         # Keep the top 10 bonds
-        self.bondsToKeep = [y for x, y in freqs[:10]]
+        self.bondsToKeep = [y for x, y in freqs]
 
     # Helper functions
 
     def splitMol(self, mol, bondsToKeep):
-        ''' fragments a molecule on a particular set of BRICS bonds. 
-        Partially sanitizes the results 
+        ''' fragments a molecule on a particular set of BRICS bonds.
+        Partially sanitizes the results
         '''
         bbnds = BRICS.FindBRICSBonds(mol)
         bndsToTry = []
@@ -132,6 +132,12 @@ class MolCombHelper:
             l1, r1 = mol1_dict[key]
             l2, r2 = mol2_dict[key]
 
+            l1 = l1.split("*")[1][1:]
+            l2 = l2.split("*")[1][1:]
+
+            r1 = r1.split("*")[1][1:]
+            r2 = r2.split("*")[1][1:]
+
             min_l = min(l1, l2, key=lambda mol: self.getIC50(mol))
             min_r = min(r1, r2, key=lambda mol: self.getIC50(mol))
             mol_list.append(Chem.MolFromSmiles(min_l + "." + min_r))
@@ -178,31 +184,19 @@ class MolCombHelper:
         fragments = self.combineFrags(mol1, mol2)
         bonds = self.getCommonBonds(mol1, mol2)
         delta = self.getDeltaFP([bonds[0]])
-        finalfp = self.getFinalFingerprint(fragments, delta)
-        return (finalfp)
+        finalfps = self.getFinalFingerprint(fragments, delta)
+        ecfp_counts = [self.get_ecfp_count_vector(fp) for fp in finalfps]
 
+        return (ecfp_counts)
 
-def getIC50(mol):
-    return np.random.uniform(0, 1000)
-
-
-def get_ecfp_count_vector(fp):
-    """
-    Returns the count ECFP representation as numpy array
-    :param smiles: Smiles string
-    :param radius: Radius for the ECFP algorithm. (eq. to number of iterations per atom)
-    :param nbits: Length of final ECFP representation
-    :return: ECFP as numpy array
-    """
-    ecfp_count = np.zeros((0,), dtype=np.int8)
-    DataStructs.ConvertToNumpyArray(fp, ecfp_count)
-    return ecfp_count
-
-
-mol_comb_helper = MolCombHelper(
-    3, 1024, getIC50, './generation-RNN/data/100k_SMILES.txt')
-
-fp = (mol_comb_helper.reconstructMol(
-    Chem.MolFromSmiles("Cc1csc(-n2nnc(C(=O)Nc3cccnc3Cl)c2C)n1"), Chem.MolFromSmiles("O=C(NCc1nccc2ccccc12)c1ccc[nH]c1=O")))
-
-print(get_ecfp_count_vector(fp[0]))
+    def get_ecfp_count_vector(self, fp):
+        """
+        Returns the count ECFP representation as numpy array
+        :param smiles: Smiles string
+        :param radius: Radius for the ECFP algorithm. (eq. to number of iterations per atom)
+        :param nbits: Length of final ECFP representation
+        :return: ECFP as numpy array
+        """
+        ecfp_count = np.zeros((0,), dtype=np.int8)
+        DataStructs.ConvertToNumpyArray(fp, ecfp_count)
+        return ecfp_count
