@@ -35,12 +35,17 @@ class MolComb:
 
     def get_affinity(self, mol):
         predictor = AffinityPrediction()
-        return (predictor.predict_affinity(mol, self.fasta))
+        return (float(predictor.predict_affinity(mol, self.fasta).numpy()))
 
     def combine(self, mol1, mol2):
-        fp = self.mol_comb_helper.reconstructMol(
-            Chem.MolFromSmiles(mol1), Chem.MolFromSmiles(mol2))
+        try:
+            fp = self.mol_comb_helper.reconstructMol(
+                Chem.MolFromSmiles(mol1), Chem.MolFromSmiles(mol2))
+        except:
+            min_mol = min(mol1, mol2, key=lambda mol: self.get_affinity(mol))
+            return(min_mol)
 
-        np.save("neuraldecipher/data/dfFold1024/fingerprint.npy", [fp[0]])
-        final_smiles = self.evaluator.eval_wrapper(self.nd)
+        # np.save("neuraldecipher/data/dfFold1024/fingerprint.npy", [fp[0]])
+        final_smiles = self.evaluator.eval_wrapper(
+            self.nd, [fp[0]], 'data/dfFold1024/fingerprint.npy')
         return(final_smiles)
