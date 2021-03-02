@@ -48,4 +48,8 @@ class MolComb:
         # np.save("neuraldecipher/data/dfFold1024/fingerprint.npy", [fp[0]])
         final_smiles = self.evaluator.eval_wrapper(
             self.nd, [fp[0]], 'data/dfFold1024/fingerprint.npy')
-        return(final_smiles)
+        if not final_smiles:
+            min_mol = min(mol1, mol2, key=lambda mol: self.get_affinity(mol))
+            return (min_mol)
+
+        return(final_smiles[0])

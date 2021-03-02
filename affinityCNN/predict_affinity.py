@@ -44,6 +44,7 @@ class AffinityPrediction:
         # added one for empty characters filled in with 0's
         self.aminos = len(amino_acids) + 1
         self.model = self.build_and_compile_model()
+#         print(self.model.summary())
 
     def build_and_compile_model(self):
         # 1D CNN model
@@ -121,7 +122,7 @@ class AffinityPrediction:
                       loss={'output': 'mae'},
                       metrics={'output': r2_score})
 
-        model.load_weights("affinityCNN/weights/affinity-best (5).hdf5")
+        model.load_weights("affinityCNN/weights/affinity-best (9).hdf5")
         return(model)
 
     def predict_affinity(self, smiles, fasta):
