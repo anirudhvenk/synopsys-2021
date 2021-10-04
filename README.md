@@ -2,6 +2,8 @@
 
 ## Using Machine Learning to Optimize Drug Discovery and Development to Counter Viral Proteins
 
+Watch the Youtube demo [here](https://www.youtube.com/watch?v=6nBseV1RIic&ab_channel=AnirudhVenkatraman).
+
 Drug discovery is traditionally an expensive, time-consuming process. My goal was to leverage deep learning techniques to develop machine learning models  to systematically generate new compounds and estimate their binding affinity for various proteins.
 
 For the project’s first phase, I trained a recurrent neural network training on 100,000 drug-like molecules and generating ~2000 unique and valid molecules, verified with Python’s rdkit library. In phase two, I built a convolutional neural network, training on the BindingDB dataset, to determine how well drugs interact with target proteins. 
